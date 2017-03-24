@@ -16,8 +16,14 @@ Vagrant.configure(2) do |config|
 	config.vm.define "dev-web" do |dev_config|
 		dev_config.vm.hostname = "vm-api-dev"
 		dev_config.vm.network "private_network", ip: "192.168.120.100"
-        dev_config.vm.synced_folder ".", "/var/www/githubtrends.pl/current", type: "rsync",
-            rsync__exclude: [".git/", ".vagrant", ".idea", ".gitignore"]
+
+
+        host = RbConfig::CONFIG['host_os']
+
+		if host =~ /darwin/ or host =~ /linux/
+            dev_config.vm.synced_folder ".", "/var/www/githubtrends.pl/current", type: "rsync",
+                rsync__exclude: [".git/", ".vagrant", ".idea", ".gitignore"]
+        end
 
 		dev_config.hostsupdater.aliases = []
 		['githubtrends.pl'].each do |project|
