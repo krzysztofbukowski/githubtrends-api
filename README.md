@@ -7,15 +7,52 @@ This is a REST API application for the githubtrends.pl website. It's implemented
 
 ### Prerequisites
 
-To run the API locally you'll need to install a few tools beforhand:
+To run the API locally you'll need to install a few tools beforehand:
 
 1. VirtualBox 5.0.x (https://www.virtualbox.org/wiki/Download_Old_Builds_5_0)
-2. vagrant 1.8.x (https://releases.hashicorp.com/vagrant/1.8.6/)
-3. vagrant hostsupdater plugin - in the project path run `$ vagrant plugin install vagrant-hostsupdater`
+2. Vagrant 1.8.x (https://releases.hashicorp.com/vagrant/1.8.6/)
+
+To check if everything's fine you can run:
+
+    $ vagrant --version
+    Vagrant 1.8.6
+
+Additionally Vagrant requires some plugins to be installed:
+1. vagrant hostsupdater plugin - automatically updates the local hosts file
+
+Install the plugins by running in the project path:
+    
+    $ vagrant plugin install vagrant-hostsupdater
+
+You can check if all plugins are installed correctly by running in the project path
+
+    $ vagrant plugin list
+    vagrant-hostsupdater (1.0.2)
+    vagrant-omnibus (1.5.0)
+    vagrant-share (1.1.5, system)
 
 ### Running
 
+After successful installation you should be able to run the application. Do it by executing in the project path
+    
+    $ vagrant up
+
 You can access the local installation of the application by accessing http://dev.githubtrends.pl
+
+#### Shared files
+
+Your host machine shares the local files with the virtual machine so you can run the code on a production-like environment
+while still using your favorite tools to edit the files.
+
+On Windows machines vagrant uses default VirtualBox shared folder.
+
+On macOS and linux to speed up the VM Vagrant uses rsync.
+
+**Note: For some reason rsync_auto doesn't work on macOS as expected and syncs the files only once during `vagrant up`. 
+To workaround this problem you need to manually run `vagrant rsync-auto`**
+
+
+
 
 ### Unit testing
 
