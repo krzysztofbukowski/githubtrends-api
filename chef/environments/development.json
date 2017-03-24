@@ -1,0 +1,17 @@
+{
+    "name": "development",
+    "chef_type": "environment",
+    "json_class": "Chef::Environment",
+    "default_attributes": {
+        "php": {
+            "display_errors" : "On",
+            "display_startup_errors" : "On",
+            "html_errors" : "On",
+            "packages" : [
+                "php71u-pecl-xdebug"
+            ]
+        }
+    },
+    "override_attributes": {
+    }
+}

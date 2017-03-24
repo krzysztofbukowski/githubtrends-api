@@ -1,0 +1,42 @@
+#
+# /etc/httpd/sites-available/<%= @project %>.conf
+#
+<%= render "header.erb", :option => {} %>
+
+<VirtualHost *:80>
+<% if @env == 'production' -%>
+    ServerAlias api.<%= @project %>
+<% elsif @env == 'testing' -%>
+    ServerName api.test.<%= @project %>
+<% else -%>
+    ServerName api.dev.<%= @project %>
+<% end %>
+    DocumentRoot /var/www/<%= @project %>/current/public
+
+    ErrorLog  logs/<%= @project%>/error.log
+    CustomLog logs/<%= @project%>/access.log common
+
+    <Directory /var/www/<%= @project %>/current/public>
+        Options FollowSymLinks
+        AllowOverride None
+
+        Order allow,deny
+        Allow from all
+
+        RewriteEngine On
+        RewriteBase /
+
+        #if a file exists on the disk don't do anything
+        RewriteCond %{REQUEST_FILENAME} -s [OR]
+        RewriteCond %{REQUEST_FILENAME} -l [OR]
+        RewriteCond %{REQUEST_FILENAME} -d
+        RewriteRule ^.*$ - [NC,L]
+
+        #remove trailing slashes
+        RewriteCond %{REQUEST_URI} /+$
+        RewriteRule ^(.+)/$ /$1 [R=301,L]
+
+        #rewrite everything else to index.php
+        RewriteRule ^.*$ index.php [NC,L]
+    </Directory>
+</VirtualHost>
