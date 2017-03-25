@@ -39,4 +39,11 @@
         #rewrite everything else to index.php
         RewriteRule ^.*$ index.php [NC,L]
     </Directory>
+
+    <Directory /var/www/<%= @project %>/current/reports/coverage>
+        Order allow,deny
+        Allow from all
+    </Directory>
+
+    Alias /tests /var/www/<%= @project %>/current/reports/coverage
 </VirtualHost>

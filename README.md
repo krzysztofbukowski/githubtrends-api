@@ -41,11 +41,15 @@ If you run if for the first time it will take a bit longer as the VM needs to be
 It uses chef for that. All configuration files can be found in the `chef` directory.
 
 Once it's finished provisioning the virtual box you will be able to access the local API via `http://api.dev.githubtrends.pl`. 
+You should be able to see the api status page:
+`{"status":"running","version":"1.0.0","uptime":1224}`
+
+You can ssh into the VM by running `vagrant ssh`
 
 #### Shared files
 
 Your host machine shares the local files with the virtual machine so you can run the code on a production-like environment
-while still using your favorite tools to edit the files.
+while still using your favorite tools to edit the files. You can find the files inside the VM inside the `/var/www/githubtrends.pl/current` folder.
 
 On Windows machines vagrant uses default VirtualBox shared folder.
 
@@ -59,3 +63,16 @@ To workaround this problem you need to manually run `vagrant rsync-auto`**
 
 ### Unit testing
 
+#### Running
+
+You can run unit tests inside the VM by running in the project path
+
+    $ composer test 
+
+#### Code coverage
+
+Code coverage is generated for the unit tests. You can browse the report by accessing `http://api.dev.githubtrends.pl/tests`
+
+#### Apache logs
+
+Apache logs can be found in the `/var/log/httpd/githubtrends.pl` folder.
