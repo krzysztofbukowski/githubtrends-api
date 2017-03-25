@@ -46,4 +46,6 @@
     </Directory>
 
     Alias /tests /var/www/<%= @project %>/current/reports/coverage
+
+    Header set Access-Control-Allow-Origin *
 </VirtualHost>
