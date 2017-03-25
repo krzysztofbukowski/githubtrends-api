@@ -23,7 +23,7 @@ Vagrant.configure(2) do |config|
         $path = "/var/www/githubtrends.pl/current"
 		if host =~ /darwin/ or host =~ /linux/
             dev_config.vm.synced_folder ".", $path, type: "rsync",
-                rsync__exclude: [".git/", ".idea", ".gitignore", "vendor"]
+                rsync__exclude: [".git/", ".idea", ".gitignore", "vendor", "reports", "data"]
         else
             dev_config.vm.synced_folder ".", $path
         end

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit colors                      = "true"
+         convertErrorsToExceptions   = "true"
+         convertNoticesToExceptions  = "true"
+         convertWarningsToExceptions = "true"
+         stopOnFailure               = "false"
+         syntaxCheck                 = "false"
+         verbose                     = "false">
+    <testsuites>
+        <testsuite name="Api Test Suite">
+            <directory>module/Api/test</directory>
+        </testsuite>
+        <testsuite name="lib test suite">
+            <directory>test/lib</directory>
+        </testsuite>
+    </testsuites>
+
+    <filter>
+        <whitelist>
+            <directory suffix=".php">lib</directory>
+            <directory suffix=".php">module</directory>
+            <exclude>
+                <directory suffix=".php">module/**/config</directory>
+                <directory suffix=".php">module/**/test</directory>
+            </exclude>
+            <exclude>
+                <directory suffix=".php">lib/**/*Test</directory>
+            </exclude>
+        </whitelist>
+    </filter>
+</phpunit>
