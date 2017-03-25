@@ -1,6 +1,6 @@
 # github trends api
 
-This is a REST API application for the githubtrends.pl website. It's implemented using PHP 7.1.x and based on Zend Framework 3.x.
+This is a REST API application for the githubtrends.pl website. It's implemented using PHP 7.0.x and based on Zend Framework 3.x.
 
 
 ## Development

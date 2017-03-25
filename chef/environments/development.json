@@ -8,7 +8,7 @@
             "display_startup_errors" : "On",
             "html_errors" : "On",
             "packages" : [
-                "php71u-pecl-xdebug"
+                "php70u-pecl-xdebug"
             ]
         }
     },

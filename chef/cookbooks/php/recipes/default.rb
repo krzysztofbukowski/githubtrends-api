@@ -17,13 +17,4 @@ template '/etc/php.ini' do
 	notifies :reload, 'service[httpd]'
 end
 
-if node.chef_environment == 'development' then
-    remote_file '/usr/local/bin/phpunit' do
-        source 'https://phar.phpunit.de/phpunit.phar'
-        action :create
-        not_if 'test -f /usr/local/bin/phpunit'
-        mode '0755'
-    end
-end
-
 include_recipe 'php::composer'
