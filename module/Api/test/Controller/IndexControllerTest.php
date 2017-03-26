@@ -4,6 +4,8 @@
 namespace ApiTest\Controller;
 
 use Api\Controller\IndexController;
+use Api\Model\Status;
+use Api\Service\StatusService;
 use Zend\Stdlib\ArrayUtils;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 
@@ -27,14 +29,23 @@ class IndexControllerTest extends AbstractHttpControllerTestCase
 
     public function testIndexActionCanBeAccessed()
     {
-        $this->markTestSkipped('Complete this later or remove');
-        /*
+        $statusServiceMock = $this->getMockBuilder(StatusService::class)
+            ->disableOriginalConstructor()->getMock();
+        $statusServiceMock->method('getStatus')
+            ->willReturn(new Status(100, "1.0"));
+
+
+        $serviceManager = $this->getApplicationServiceLocator();
+        $serviceManager->setAllowOverride(true);
+        $serviceManager->setService(StatusService::class, $statusServiceMock);
+
+
         $this->dispatch('/', 'GET');
         $this->assertResponseStatusCode(200);
-        $this->assertModuleName('application');
+        $this->assertModuleName('api');
         $this->assertControllerName(IndexController::class); // as specified in router's controller name alias
         $this->assertControllerClass('IndexController');
-        $this->assertMatchedRouteName('application');*/
+        $this->assertMatchedRouteName('api-status');
 
     }
 }

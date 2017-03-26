@@ -2,10 +2,10 @@
 
 namespace Api;
 
-use Api\Controller\IndexController;
 use Api\Controller\ReposController;
 use Zend\Router\Http\Literal;
 use Zend\Router\Http\Segment;
+
 
 return [
     'router' => [
@@ -48,15 +48,23 @@ return [
     ],
     'controllers' => [
         'invokables' => [
-            Controller\IndexController::class => IndexController::class,
             Controller\ReposController::class => ReposController::class
         ],
     ],
     'view_manager' => [
         'display_not_found_reason' => true,
         'display_exceptions'       => true,
+        'not_found_template'       => 'error/404',
+        'exception_template'       => 'error/index',
         'strategies' => [
             'ViewJsonStrategy',
         ],
+        'template_map' => [
+            'layout/layout'           => realpath(__DIR__ . '/../src/view/layout/layout.phtml'),
+            'error/index' => __DIR__ . '/../src/view/error.phtml',
+        ],
+        'template_path_stack' => array(
+            'api' => __DIR__ . '/../view',
+        )
     ],
 ];

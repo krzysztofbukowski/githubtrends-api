@@ -2,24 +2,25 @@
 
 namespace Api\Controller;
 
-use Api\Module;
-use Utils\Uptime;
+use Api\Service\StatusServiceInterface;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\JsonModel;
 
 class IndexController extends AbstractActionController
 {
+    /**
+     * @var StatusServiceInterface
+     */
+    protected $_statusService;
+
+    public function __construct(StatusServiceInterface $statusService)
+    {
+        $this->_statusService = $statusService;
+    }
+
 
     public function indexAction()
     {
-        $uptime = new Uptime();
-
-        $status = [
-            'status' => Module::STATUS_RUNNING,
-            'version' => Module::VERSION,
-            'uptime' => $uptime->calculate(Uptime::HTTPD_PID)
-        ];
-
-        return new JsonModel($status);
+        return new JsonModel($this->_statusService->getStatus());
     }
 }
