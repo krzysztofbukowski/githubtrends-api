@@ -7,7 +7,7 @@
 # All rights reserved - Do Not Redistribute
 #
 
-['vim', 'nc', 'wget', 'epel-release'].each do |pkg|
+['vim', 'nc', 'wget', 'epel-release', 'gcc', 'zlib-devel'].each do |pkg|
     package pkg
 end
 

@@ -18,7 +18,8 @@
         "zendframework/zend-component-installer": "^1.0 || ^0.3 || ^1.0.0-dev@dev",
         "zendframework/zend-mvc": "^3.0.1",
         "zendframework/zend-test": "^3.0.1",
-        "zendframework/zend-json": "^3.0"
+        "zendframework/zend-json": "^3.0",
+        "zendframework/zend-cache": "^2.7"
     },
     "autoload": {
         "psr-4": {

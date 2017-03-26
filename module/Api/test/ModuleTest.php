@@ -10,10 +10,15 @@ class ModuleTest extends PHPUnit_Framework_TestCase
      * @var \Api\Module
      */
     protected $_module;
+    protected $_serviceManagerMock;
 
     protected function setUp()
     {
         $this->_module = new \Api\Module();
+        $this->_serviceManagerMock = $this->getMockBuilder(
+            \Zend\ServiceManager\ServiceManager::class
+        )->getMock();
+
     }
 
     public function testGetServiceConfigReturnsArray()
@@ -31,12 +36,21 @@ class ModuleTest extends PHPUnit_Framework_TestCase
         $this->assertInternalType('array', $result);
         $this->assertArrayHasKey('factories', $result);
 
-        $mock = $this->getMockBuilder(\Zend\ServiceManager\ServiceManager::class)
-            ->getMock();
-
         $this->assertInstanceOf(
             \Api\Service\StatusService::class,
-                $result['factories'][\Api\Service\StatusService::class]($mock)
+                $result['factories'][\Api\Service\StatusService::class]($this->_serviceManagerMock)
+        );
+    }
+
+    public function testGetServicesConfigCreatesRedisAdapter()
+    {
+        $result = $this->_module->getServiceConfig();
+        $this->assertInternalType('array', $result);
+        $this->assertArrayHasKey('factories', $result);
+
+        $this->assertInstanceOf(
+            \Zend\Cache\Storage\Adapter\Redis::class,
+            $result['factories'][\Zend\Cache\Storage\Adapter\Redis::class]($this->_serviceManagerMock)
         );
     }
 
@@ -46,12 +60,16 @@ class ModuleTest extends PHPUnit_Framework_TestCase
         $this->assertInternalType('array', $result);
         $this->assertArrayHasKey('factories', $result);
 
-        $mock = $this->getMockBuilder(\Zend\ServiceManager\ServiceManager::class)
-            ->getMock();
+        $redisAdatperMock = $this->getMockBuilder(\Zend\Cache\Storage\Adapter\Redis::class)
+        ->disableOriginalConstructor()->getMock();
+
+        $this->_serviceManagerMock->method('get')
+            ->with(\Zend\Cache\Storage\Adapter\Redis::class)
+            ->willReturn($redisAdatperMock);
 
         $this->assertInstanceOf(
             \Api\Service\GithubRepositoriesService::class,
-            $result['factories'][\Api\Service\GithubRepositoriesService::class]($mock)
+            $result['factories'][\Api\Service\GithubRepositoriesService::class]($this->_serviceManagerMock)
         );
     }
 
@@ -71,19 +89,16 @@ class ModuleTest extends PHPUnit_Framework_TestCase
         $this->assertInternalType('array', $result);
         $this->assertArrayHasKey('factories', $result);
 
-        $serviceManagerMock = $this->getMockBuilder(\Zend\ServiceManager\ServiceManager::class)
-            ->getMock();
-
         $serviceMock = $this->getMockBuilder(\Api\Service\StatusService::class)
             ->disableOriginalConstructor()->getMock();
 
-        $serviceManagerMock->method('get')
+        $this->_serviceManagerMock->method('get')
             ->with(\Api\Service\StatusService::class)
             ->willReturn($serviceMock);
 
         $this->assertInstanceOf(
             \Api\Controller\IndexController::class,
-            $result['factories'][\Api\Controller\IndexController::class]($serviceManagerMock)
+            $result['factories'][\Api\Controller\IndexController::class]($this->_serviceManagerMock)
         );
     }
 
@@ -93,19 +108,16 @@ class ModuleTest extends PHPUnit_Framework_TestCase
         $this->assertInternalType('array', $result);
         $this->assertArrayHasKey('factories', $result);
 
-        $serviceManagerMock = $this->getMockBuilder(\Zend\ServiceManager\ServiceManager::class)
-            ->getMock();
-
         $serviceMock = $this->getMockBuilder(\Api\Service\GithubRepositoriesService::class)
             ->disableOriginalConstructor()->getMock();
 
-        $serviceManagerMock->method('get')
+        $this->_serviceManagerMock->method('get')
             ->with(\Api\Service\GithubRepositoriesService::class)
             ->willReturn($serviceMock);
 
         $this->assertInstanceOf(
             \Api\Controller\ReposController::class,
-            $result['factories'][\Api\Controller\ReposController::class]($serviceManagerMock)
+            $result['factories'][\Api\Controller\ReposController::class]($this->_serviceManagerMock)
         );
     }
 
