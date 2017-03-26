@@ -3,9 +3,9 @@
 
 namespace ApiTest\Controller;
 
-use Api\Controller\IndexController;
 use Api\Controller\ReposController;
 use Api\Module;
+use Api\Service\GithubRepositoriesService;
 use Zend\Stdlib\ArrayUtils;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 
@@ -32,7 +32,22 @@ class ReposControllerTest extends AbstractHttpControllerTestCase
     public function testGetCanBeAccessed()
     {
 
-        $this->dispatch('/repos/123', 'GET');
+        $githubRepositoriesServiceMock = $this->getMockBuilder(
+            GithubRepositoriesService::class
+        )->disableOriginalConstructor()->getMock();
+
+        $githubRepositoriesServiceMock->method('compare')
+            ->willReturn([]);
+
+        $serviceManager = $this->getApplicationServiceLocator();
+        $serviceManager->setAllowOverride(true);
+        $serviceManager->setService(
+            GithubRepositoriesService::class,
+            $githubRepositoriesServiceMock
+        );
+
+
+        $this->dispatch('/repos/owner/repo1,owner/repo2', 'GET');
         $this->assertResponseStatusCode(200);
         $this->assertModuleName(Module::NAME);
         $this->assertControllerName(ReposController::class); // as specified in router's controller name alias

@@ -35,7 +35,7 @@ return [
                         'options' => [
                             'route'    => '/:id',
                             'constraints' => [
-                                'id' => '[,a-zA-Z0-9_-]+',
+                                'id' => '[a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+,[a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+',
                             ],
                             'defaults' => [
                                 'controller' => Controller\ReposController::class,
@@ -44,11 +44,6 @@ return [
                     ],
                 ],
             ],
-        ],
-    ],
-    'controllers' => [
-        'invokables' => [
-            Controller\ReposController::class => ReposController::class
         ],
     ],
     'view_manager' => [
@@ -61,7 +56,8 @@ return [
         ],
         'template_map' => [
             'layout/layout'           => realpath(__DIR__ . '/../src/view/layout/layout.phtml'),
-            'error/index' => __DIR__ . '/../src/view/error.phtml',
+            'error/index' => __DIR__ . '/../src/view/error/error.phtml',
+            'error/404' => __DIR__ . '/../src/view/error/404.phtml',
         ],
         'template_path_stack' => array(
             'api' => __DIR__ . '/../view',
