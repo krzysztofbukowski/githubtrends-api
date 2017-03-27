@@ -67,7 +67,7 @@ To workaround this problem you need to manually run `vagrant rsync-auto`**
 
 You can run unit tests inside the VM by running in the project path
 
-    $ composer test 
+    $ ./vendor/bin/phpunit
 
 #### Code coverage
 
