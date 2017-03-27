@@ -6,7 +6,7 @@ namespace Github;
  * @author: Krzysztof Bukowski <ja@krzysztofbukowski.pl>
  * Date: 26/03/2017
  */
-class RepositoriesApi implements RepositoriesApiInterface, ApiInterface
+class Api implements ApiInterface
 {
     /**
      * @var Client;
@@ -32,12 +32,27 @@ class RepositoriesApi implements RepositoriesApiInterface, ApiInterface
         $this->_client = $client;
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function getPullRequests(string $owner, string $repository, string $is)
+    {
+        return $this->_client->get("/search/issues?q=+type:pr+repo:$owner/$repository+is:$is");
+    }
 
     /**
      * {@inheritdoc}
      */
-    public function getRepoDetails(string $owner, string $repository)
+    public function get(string $owner, string $repository)
     {
         return $this->_client->get("/repos/$owner/$repository");
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function latest(string $owner, string $repository)
+    {
+        return $this->_client->get("/repos/$owner/$repository/releases/latest");
     }
 }

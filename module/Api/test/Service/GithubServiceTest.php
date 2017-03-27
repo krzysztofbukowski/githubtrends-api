@@ -1,20 +1,21 @@
 <?php
 
 namespace ApiTest\Service;
+
 use Api\Model\Mapper\RepositoryMapper;
 use Api\Model\Repository;
-use Api\Service\GithubRepositoriesService;
-use Github\RepositoriesApi;
+use Api\Service\GithubService;
+use Github\Api;
 
 /**
  * @author: Krzysztof Bukowski <ja@krzysztofbukowski.pl>
  * Date: 26/03/2017
  */
-class GithubRepositoriesServiceTest extends \PHPUnit_Framework_TestCase
+class GithubServiceTest extends \PHPUnit_Framework_TestCase
 {
 
     /**
-     * @var GithubRepositoriesService
+     * @var GithubService
      */
     protected $_service;
 
@@ -23,21 +24,27 @@ class GithubRepositoriesServiceTest extends \PHPUnit_Framework_TestCase
      */
     protected $_repositoriesApiMock;
 
-    public function setUp() {
-        $this->_repositoriesApiMock = $this->getMockBuilder(RepositoriesApi::class)
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $_repositoryMapperMock;
+
+    public function setUp()
+    {
+        $this->_repositoriesApiMock = $this->getMockBuilder(Api::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->_repositoriesApiMock->method('getRepoDetails')
+        $this->_repositoriesApiMock->method('get')
             ->willReturn(null);
 
-        $repositoryMapperMock = $this->getMockBuilder(RepositoryMapper::class)
+        $this->_repositoryMapperMock = $this->getMockBuilder(RepositoryMapper::class)
             ->getMock();
-        $repositoryMapperMock->method('map')
+        $this->_repositoryMapperMock->method('map')
             ->willReturn(new Repository());
 
 
-        $this->_service = new GithubRepositoriesService($this->_repositoriesApiMock);
-        $this->_service->setRepositoryMapper($repositoryMapperMock);
+        $this->_service = new GithubService($this->_repositoriesApiMock);
+        $this->_service->setRepositoryMapper($this->_repositoryMapperMock);
     }
 
     public function testGetRepositoryMapper()
@@ -77,6 +84,9 @@ class GithubRepositoriesServiceTest extends \PHPUnit_Framework_TestCase
     public function testCompareWillSaveDataInCacheAndReturnIt()
     {
         $data = [null, null];
+
+        $this->_repositoryMapperMock->method('map')
+            ->willReturn(new Repository());
 
         $cacheAdapterMock = $this->getMockBuilder(\Zend\Cache\Storage\Adapter\Redis::class)
             ->disableOriginalConstructor()->getMock();

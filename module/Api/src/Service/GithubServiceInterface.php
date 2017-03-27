@@ -6,8 +6,7 @@
 
 namespace Api\Service;
 
-
-interface GithubRepositoriesServiceInterface
+interface GithubServiceInterface
 {
-    public function compare(string $repository1, string $repository2);
+    public function compare(string $repositoryName1, string $repositoryName2);
 }
