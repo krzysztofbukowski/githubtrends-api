@@ -6,6 +6,7 @@ namespace ApiTest\Controller;
 use Api\Controller\CompareController;
 use Api\Module;
 use Api\Service\GithubService;
+use Zend\Log\Logger;
 use Zend\Stdlib\ArrayUtils;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 
@@ -40,13 +41,16 @@ class CompareControllerTest extends AbstractHttpControllerTestCase
             ->method('compare')
             ->willReturn([]);
 
+        $loggerMock = $this->getMockBuilder(Logger::class)
+            ->disableOriginalConstructor()->getMock();
+
         $serviceManager = $this->getApplicationServiceLocator();
         $serviceManager->setAllowOverride(true);
         $serviceManager->setService(
             GithubService::class,
             $githubRepositoriesServiceMock
         );
-
+        $serviceManager->setService('logger', $loggerMock);
 
         $this->dispatch('/compare/owner/repo1,owner2/repo2', 'GET');
         $this->assertResponseStatusCode(200);

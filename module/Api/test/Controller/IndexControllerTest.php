@@ -6,6 +6,7 @@ namespace ApiTest\Controller;
 use Api\Controller\IndexController;
 use Api\Model\Status;
 use Api\Service\StatusService;
+use Zend\Log\Logger;
 use Zend\Stdlib\ArrayUtils;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 
@@ -34,10 +35,13 @@ class IndexControllerTest extends AbstractHttpControllerTestCase
         $statusServiceMock->method('getStatus')
             ->willReturn(new Status(100, "1.0"));
 
+        $loggerMock = $this->getMockBuilder(Logger::class)
+            ->disableOriginalConstructor()->getMock();
 
         $serviceManager = $this->getApplicationServiceLocator();
         $serviceManager->setAllowOverride(true);
         $serviceManager->setService(StatusService::class, $statusServiceMock);
+        $serviceManager->setService('logger', $loggerMock);
 
 
         $this->dispatch('/', 'GET');

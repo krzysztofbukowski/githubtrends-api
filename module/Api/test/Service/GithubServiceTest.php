@@ -7,7 +7,7 @@ use Api\Model\Repository;
 use Api\Service\GithubService;
 use Github\Api;
 use Github\ApiInterface;
-use Zend\Http\Response;
+use Zend\Log\Logger;
 
 /**
  * @author: Krzysztof Bukowski <ja@krzysztofbukowski.pl>
@@ -105,6 +105,18 @@ class GithubServiceTest extends \PHPUnit_Framework_TestCase
 
         $result = $this->_service->compare('owner/repo1', 'owner/repo2');
         $this->assertEquals($result, $data);
+    }
+
+    public function testCompareWillLogDataIfLoggerIsAvailable()
+    {
+        $loggerMock = $this->getMockBuilder(Logger::class)
+            ->disableOriginalConstructor()->getMock();
+
+        $loggerMock->expects($this->any())
+            ->method('debug');
+
+        $this->_service->setLogger($loggerMock);
+        $result = $this->_service->compare('owner/repo', 'owner2/repo2');
     }
 
     // -------------- checkRepoIfExists tests --------------------------------------
