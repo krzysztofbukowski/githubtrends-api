@@ -68,8 +68,8 @@ class GithubRepositoriesService implements GithubRepositoriesServiceInterface
         $result2 = $this->_api->getRepoDetails($owner, $repository);
 
         return [
-            'repository1' => $this->_mapper->map($result1)->getIterator()->getArrayCopy(),
-            'repository2' => $this->_mapper->map($result2)->getIterator()->getArrayCopy()
+            $result1 ? $this->_mapper->map($result1)->getIterator()->getArrayCopy() : null,
+            $result2 ? $this->_mapper->map($result2)->getIterator()->getArrayCopy() : null
         ];
     }
 }

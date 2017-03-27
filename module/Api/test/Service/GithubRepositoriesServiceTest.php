@@ -52,8 +52,6 @@ class GithubRepositoriesServiceTest extends \PHPUnit_Framework_TestCase
         $result = $githubService->compare('owner/repo1', 'owner/repo2');
 
         $this->assertInternalType('array', $result);
-        $this->assertArrayHasKey('repository1', $result);
-        $this->assertArrayHasKey('repository2', $result);
     }
 
 }

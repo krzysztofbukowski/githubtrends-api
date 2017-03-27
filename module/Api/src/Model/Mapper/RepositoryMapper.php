@@ -21,6 +21,7 @@ class RepositoryMapper implements MapperInterface
 
         $repository = new Repository();
 
+
         $repository->setForks($data->forks_count);
         $repository->setStars($data->stargazers_count);
         $repository->setWatchers($data->watchers_count);

@@ -3,6 +3,7 @@
 namespace Github;
 
 use Zend\Http\Request;
+use Zend\Http\Response;
 
 /**
  * @author: Krzysztof Bukowski <ja@krzysztofbukowski.pl>
@@ -35,7 +36,11 @@ class Client
 
         try {
             $response = $this->_httpClient->send();
-            return json_decode($response->getBody());
+            if ($response->getStatusCode() == Response::STATUS_CODE_200) {
+                return json_decode($response->getBody());
+            } else {
+                return null;
+            }
         } catch (\Exception $e) {
             return null;
         }
