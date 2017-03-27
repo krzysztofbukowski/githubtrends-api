@@ -6,9 +6,6 @@
 
 namespace Api\Model;
 
-
-use Traversable;
-
 class Repository implements \IteratorAggregate
 {
 
@@ -19,6 +16,79 @@ class Repository implements \IteratorAggregate
     protected $_watchers;
 
     protected $_fullName;
+
+    protected $_latestRelease;
+
+    protected $_openPullRequestsCount;
+
+    protected $_closedPullRequests;
+
+    protected $_lastMergedPullRequestDate;
+
+    /**
+     * @return mixed
+     */
+    public function getLastMergedPullRequestDate()
+    {
+        return $this->_lastMergedPullRequestDate;
+    }
+
+    /**
+     * @param mixed $lastMergedPullRequestDate
+     */
+    public function setLastMergedPullRequestDate($lastMergedPullRequestDate)
+    {
+        $this->_lastMergedPullRequestDate = $lastMergedPullRequestDate;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getOpenPullRequestsCount()
+    {
+        return $this->_openPullRequestsCount;
+    }
+
+    /**
+     * @param int $openPullRequestsCount
+     */
+    public function setOpenPullRequestsCount(int $openPullRequestsCount)
+    {
+        $this->_openPullRequestsCount = $openPullRequestsCount;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getClosedPullRequests()
+    {
+        return $this->_closedPullRequests;
+    }
+
+    /**
+     * @param mixed $closedPullRequestsCount
+     */
+    public function setClosedPullRequestsCount(int $closedPullRequestsCount)
+    {
+        $this->_closedPullRequests = $closedPullRequestsCount;
+    }
+
+
+    /**
+     * @return mixed
+     */
+    public function getLatestRelease()
+    {
+        return $this->_latestRelease;
+    }
+
+    /**
+     * @param mixed $latestRelease
+     */
+    public function setLatestRelease($latestRelease)
+    {
+        $this->_latestRelease = $latestRelease;
+    }
 
     /**
      * @return mixed
@@ -92,6 +162,10 @@ class Repository implements \IteratorAggregate
             'watchers' => $this->getWatchers(),
             'stars' => $this->getStars(),
             'full_name' => $this->getFullName(),
+            'latest_release' => $this->getLatestRelease(),
+            'open_pull_requests' => $this->getOpenPullRequestsCount(),
+            'closed_pull_requests' => $this->getClosedPullRequests(),
+            'last_merged_pull_request' => $this->getLastMergedPullRequestDate(),
         ]);
     }
 }

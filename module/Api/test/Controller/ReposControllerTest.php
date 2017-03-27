@@ -5,7 +5,7 @@ namespace ApiTest\Controller;
 
 use Api\Controller\ReposController;
 use Api\Module;
-use Api\Service\GithubRepositoriesService;
+use Api\Service\GithubService;
 use Zend\Stdlib\ArrayUtils;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 
@@ -33,7 +33,7 @@ class ReposControllerTest extends AbstractHttpControllerTestCase
     {
 
         $githubRepositoriesServiceMock = $this->getMockBuilder(
-            GithubRepositoriesService::class
+            GithubService::class
         )->disableOriginalConstructor()->getMock();
 
         $githubRepositoriesServiceMock->method('compare')
@@ -42,7 +42,7 @@ class ReposControllerTest extends AbstractHttpControllerTestCase
         $serviceManager = $this->getApplicationServiceLocator();
         $serviceManager->setAllowOverride(true);
         $serviceManager->setService(
-            GithubRepositoriesService::class,
+            GithubService::class,
             $githubRepositoriesServiceMock
         );
 

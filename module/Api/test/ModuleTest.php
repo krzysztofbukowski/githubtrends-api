@@ -54,7 +54,7 @@ class ModuleTest extends PHPUnit_Framework_TestCase
         );
     }
 
-    public function testGetServiceConfigCreatesGithubRepositoriesService()
+    public function testGetServiceConfigCreatesGithubService()
     {
         $result = $this->_module->getServiceConfig();
         $this->assertInternalType('array', $result);
@@ -68,8 +68,8 @@ class ModuleTest extends PHPUnit_Framework_TestCase
             ->willReturn($redisAdatperMock);
 
         $this->assertInstanceOf(
-            \Api\Service\GithubRepositoriesService::class,
-            $result['factories'][\Api\Service\GithubRepositoriesService::class]($this->_serviceManagerMock)
+            \Api\Service\GithubService::class,
+            $result['factories'][\Api\Service\GithubService::class]($this->_serviceManagerMock)
         );
     }
 
@@ -108,11 +108,11 @@ class ModuleTest extends PHPUnit_Framework_TestCase
         $this->assertInternalType('array', $result);
         $this->assertArrayHasKey('factories', $result);
 
-        $serviceMock = $this->getMockBuilder(\Api\Service\GithubRepositoriesService::class)
+        $serviceMock = $this->getMockBuilder(\Api\Service\GithubService::class)
             ->disableOriginalConstructor()->getMock();
 
         $this->_serviceManagerMock->method('get')
-            ->with(\Api\Service\GithubRepositoriesService::class)
+            ->with(\Api\Service\GithubService::class)
             ->willReturn($serviceMock);
 
         $this->assertInstanceOf(

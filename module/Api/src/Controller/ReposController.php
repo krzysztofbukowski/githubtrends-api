@@ -2,18 +2,18 @@
 
 namespace Api\Controller;
 
-use Api\Service\GithubRepositoriesServiceInterface;
+use Api\Service\GithubServiceInterface;
 use Zend\Mvc\Controller\AbstractRestfulController;
 use Zend\View\Model\JsonModel;
 
 class ReposController extends AbstractRestfulController
 {
     /**
-     * @var GithubRepositoriesServiceInterface
+     * @var GithubServiceInterface
      */
     protected $_service;
 
-    public function __construct(GithubRepositoriesServiceInterface $service)
+    public function __construct(GithubServiceInterface $service)
     {
         $this->_service = $service;
     }

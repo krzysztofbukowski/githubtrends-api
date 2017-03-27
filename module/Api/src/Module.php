@@ -3,7 +3,7 @@
 namespace Api;
 
 use Api\Model\Mapper\RepositoryMapper;
-use Api\Service\GithubRepositoriesService;
+use Api\Service\GithubService;
 use Api\Service\StatusService;
 use Github\Client;
 use Utils\Uptime;
@@ -58,14 +58,14 @@ class Module implements ConfigProviderInterface
                 StatusService::class => function ($container) {
                     return new StatusService(new Uptime());
                 },
-                GithubRepositoriesService::class => function($container) {
-                    $githubRepositoriesApi = new \Github\RepositoriesApi(
+                GithubService::class => function($container) {
+                    $githubRepositoriesApi = new \Github\Api(
                         new Client(
                             new \Zend\Http\Client()
                         )
                     );
 
-                    $service = new GithubRepositoriesService($githubRepositoriesApi);
+                    $service = new GithubService($githubRepositoriesApi);
                     $service->setCacheAdapter(
                         $container->get(\Zend\Cache\Storage\Adapter\Redis::class)
                     );
@@ -86,7 +86,7 @@ class Module implements ConfigProviderInterface
                     return new Controller\IndexController($service);
                 },
                 Controller\ReposController::class => function ($container) {
-                    $service = $container->get(GithubRepositoriesService::class);
+                    $service = $container->get(GithubService::class);
                     return new Controller\ReposController($service);
                 },
             ],
