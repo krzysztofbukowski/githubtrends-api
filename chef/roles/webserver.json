@@ -11,11 +11,13 @@
     "env_run_lists": {
         "production": [
             "recipe[system]",
+            "recipe[redis]",
             "recipe[httpd]",
             "recipe[php]"
         ],
         "development": [
             "recipe[system]",
+            "recipe[redis]",
             "recipe[httpd]",
             "recipe[php]"
         ]

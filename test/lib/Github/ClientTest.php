@@ -15,9 +15,17 @@ class ClientTest extends \PHPUnit_Framework_TestCase
      */
     protected $_client;
 
+    /**
+     * @var
+     */
+    protected $_httpClientMock;
+
     protected function setUp()
     {
+        $this->_httpClientMock = $this->getMockBuilder(\Zend\Http\Client::class)
+            ->disableOriginalConstructor()->getMock();
 
+        $this->_client = new Client($this->_httpClientMock);
     }
 
 
@@ -25,16 +33,11 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     {
         $path = '/some/path';
 
-        $httpClientMock = $this->getMockBuilder(\Zend\Http\Client::class)
-            ->disableOriginalConstructor()->getMock();
-
-        $httpClientMock->method('send')
+        $this->_httpClientMock->method('send')
             ->willReturn(new Response());
 
-        $httpClientMock->method('setUri')
+        $this->_httpClientMock->method('setUri')
             ->with(Client::API_HOST . $path);
-
-        $this->_client = new Client($httpClientMock);
 
         $this->_client->get($path);
     }
@@ -43,22 +46,16 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     {
         $path = '/some/path';
 
-        $httpClientMock = $this->getMockBuilder(\Zend\Http\Client::class)
-            ->disableOriginalConstructor()->getMock();
-
         $response = new Response();
         $response->setContent(json_encode(new \stdClass()));
 
-        $httpClientMock->method('send')
+        $this->_httpClientMock->method('send')
             ->willReturn($response);
 
-        $httpClientMock->method('setUri')
+        $this->_httpClientMock->method('setUri')
             ->with(Client::API_HOST . $path);
 
-        $this->_client = new Client($httpClientMock);
-
         $result = $this->_client->get($path);
-
         $this->assertInstanceOf(\stdClass::class, $result);
     }
 
@@ -66,19 +63,24 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     {
         $path = '/some/path';
 
-        $httpClientMock = $this->getMockBuilder(\Zend\Http\Client::class)
-            ->disableOriginalConstructor()->getMock();
-
-        $httpClientMock->method('send')
+        $this->_httpClientMock->method('send')
             ->willThrowException(new \Exception());
-
-        $httpClientMock->method('setUri')
+        $this->_httpClientMock->method('setUri')
             ->with(Client::API_HOST . $path);
 
-        $this->_client = new Client($httpClientMock);
+        $result = $this->_client->get($path);
+        $this->assertNull($result);
+    }
+
+    public function testGetWillReturnNullIfResponseStatusCodeIsNot200 () {
+        $response = new Response();
+        $response->setStatusCode(Response::STATUS_CODE_400);
+
+        $path = '/some/path';
+        $this->_httpClientMock->method('send')
+            ->willReturn($response);
 
         $result = $this->_client->get($path);
-
         $this->assertNull($result);
     }
 

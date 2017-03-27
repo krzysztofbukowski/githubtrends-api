@@ -22,6 +22,11 @@ class GithubRepositoriesService implements GithubRepositoriesServiceInterface
      */
     protected $_api;
 
+    /**
+     * @var
+     */
+    protected $_cacheAdapter;
+
 
     /**
      * @var RepositoryMapper
@@ -59,17 +64,51 @@ class GithubRepositoriesService implements GithubRepositoriesServiceInterface
      */
     public function compare(string $repository1, string $repository2)
     {
+        $result = null;
+        $cacheKey = "repos_$repository1,$repository2";
+        $cacheAdapter = $this->getCacheAdapter();
+
+        if ($cacheAdapter instanceof \Zend\Cache\Storage\Adapter\AbstractAdapter) {
+            $result = $cacheAdapter->getItem($cacheKey);
+            if ($result != null) {
+                return (array)json_decode($result);
+            }
+        }
+
         list($owner, $repository) = explode('/', $repository1);
 
-        $result1 = $this->_api->getRepoDetails($owner, $repository);
+        $repo1Details = $this->_api->getRepoDetails($owner, $repository);
 
         list($owner, $repository) = explode('/', $repository2);
 
-        $result2 = $this->_api->getRepoDetails($owner, $repository);
+        $repo2Details = $this->_api->getRepoDetails($owner, $repository);
 
-        return [
-            $result1 ? $this->_mapper->map($result1)->getIterator()->getArrayCopy() : null,
-            $result2 ? $this->_mapper->map($result2)->getIterator()->getArrayCopy() : null
+        $result = [
+            $repo1Details ? $this->_mapper->map($repo1Details)->getIterator()->getArrayCopy() : null,
+            $repo2Details ? $this->_mapper->map($repo2Details)->getIterator()->getArrayCopy() : null
         ];
+
+        if ($cacheAdapter instanceof \Zend\Cache\Storage\Adapter\AbstractAdapter) {
+            $cacheAdapter->setItem($cacheKey, json_encode($result));
+        }
+
+        return $result;
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setCacheAdapter(\Zend\Cache\Storage\Adapter\AbstractAdapter $adapter)
+    {
+        $this->_cacheAdapter = $adapter;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCacheAdapter()
+    {
+        return $this->_cacheAdapter;
     }
 }

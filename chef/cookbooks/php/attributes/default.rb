@@ -7,5 +7,7 @@ node.default['php']['packages'] = [
     "php70u-json",
     "php70u-mcrypt",
     "php70u-mbstring",
-    "php70u-xml"
+    "php70u-xml",
+    "php70u-devel",
+    "php70u-redis"
 ]

@@ -34,6 +34,27 @@ class Module implements ConfigProviderInterface
     {
         return [
             'factories' => [
+                \Zend\Cache\Storage\Adapter\Redis::class => function($container) {
+                    $cache   = \Zend\Cache\StorageFactory::factory([
+                        'adapter' => array(
+                            'name' => 'redis',
+                            'options' => [
+                                'server' => [
+                                    'host' => 'localhost',
+                                    'port' => '6379'
+                                ],
+                            ]
+                        ),
+                        'plugins' => [
+                            // Don't throw exceptions on cache errors
+                            'exception_handler' => [
+                                'throw_exceptions' => false
+                            ],
+                        ]
+                    ]);
+
+                    return $cache;
+                },
                 StatusService::class => function ($container) {
                     return new StatusService(new Uptime());
                 },
@@ -45,6 +66,9 @@ class Module implements ConfigProviderInterface
                     );
 
                     $service = new GithubRepositoriesService($githubRepositoriesApi);
+                    $service->setCacheAdapter(
+                        $container->get(\Zend\Cache\Storage\Adapter\Redis::class)
+                    );
                     $service->setRepositoryMapper(new RepositoryMapper());
 
                     return $service;

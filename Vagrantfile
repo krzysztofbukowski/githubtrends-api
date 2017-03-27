@@ -70,6 +70,8 @@ $script = <<SCRIPT
 cd /var/www/githubtrends.pl/current
 pwd
 sudo -u vagrant /usr/local/bin/composer install
+sudo -u vagrant mkdir -p data/cache
+sudo chmod o+w data/cache
 SCRIPT
 
 		dev_config.vm.provision "shell", inline: $script
