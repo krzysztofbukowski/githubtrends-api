@@ -35,7 +35,7 @@ return [
                         'options' => [
                             'route'    => '/:id',
                             'constraints' => [
-                                'id' => '[a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+,[a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+',
+                                'id' => '[a-zA-Z0-9_-]+/[a-zA-Z0-9_\-\.]+,[a-zA-Z0-9_-]+/[a-zA-Z0-9_\-\.]+',
                             ],
                             'defaults' => [
                                 'controller' => Controller\ReposController::class,
