@@ -21,7 +21,7 @@ class Repository implements \IteratorAggregate
 
     protected $_openPullRequestsCount;
 
-    protected $_closedPullRequests;
+    protected $_closedPullRequestsCount;
 
     protected $_lastMergedPullRequestDate;
 
@@ -60,9 +60,9 @@ class Repository implements \IteratorAggregate
     /**
      * @return mixed
      */
-    public function getClosedPullRequests()
+    public function getClosedPullRequestsCount()
     {
-        return $this->_closedPullRequests;
+        return $this->_closedPullRequestsCount;
     }
 
     /**
@@ -70,12 +70,12 @@ class Repository implements \IteratorAggregate
      */
     public function setClosedPullRequestsCount(int $closedPullRequestsCount)
     {
-        $this->_closedPullRequests = $closedPullRequestsCount;
+        $this->_closedPullRequestsCount = $closedPullRequestsCount;
     }
 
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getLatestRelease()
     {
@@ -83,9 +83,9 @@ class Repository implements \IteratorAggregate
     }
 
     /**
-     * @param mixed $latestRelease
+     * @param string $latestRelease
      */
-    public function setLatestRelease($latestRelease)
+    public function setLatestRelease(string $latestRelease)
     {
         $this->_latestRelease = $latestRelease;
     }
@@ -155,6 +155,9 @@ class Repository implements \IteratorAggregate
     }
 
 
+    /**
+     * {@inheritdoc}
+     */
     public function getIterator()
     {
         return new \ArrayIterator([
@@ -164,7 +167,7 @@ class Repository implements \IteratorAggregate
             'full_name' => $this->getFullName(),
             'latest_release' => $this->getLatestRelease(),
             'open_pull_requests' => $this->getOpenPullRequestsCount(),
-            'closed_pull_requests' => $this->getClosedPullRequests(),
+            'closed_pull_requests' => $this->getClosedPullRequestsCount(),
             'last_merged_pull_request' => $this->getLastMergedPullRequestDate(),
         ]);
     }
