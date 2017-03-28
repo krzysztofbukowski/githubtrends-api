@@ -45,8 +45,6 @@ Vagrant.configure(2) do |config|
 			dev_chef.environments_path = "chef/environments"
 			dev_chef.environment = "development"
 
-            dev_chef.data_bags_path = "chef/data_bags"
-
 			dev_chef.roles_path = "chef/roles"
 			dev_chef.add_role "webserver"
 
