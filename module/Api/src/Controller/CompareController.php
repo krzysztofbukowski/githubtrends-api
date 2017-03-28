@@ -6,7 +6,7 @@ use Api\Service\GithubServiceInterface;
 use Zend\Mvc\Controller\AbstractRestfulController;
 use Zend\View\Model\JsonModel;
 
-class ReposController extends AbstractRestfulController
+class CompareController extends AbstractRestfulController
 {
     /**
      * @var GithubServiceInterface
@@ -19,6 +19,14 @@ class ReposController extends AbstractRestfulController
     }
 
 
+    /**
+     *
+     * Returns details about two given repositories
+     *
+     * @param string $id Repository names separated by a comma: repository1,repository2
+     *
+     * @return JsonModel
+     */
     public function get($id)
     {
         $repos = explode(',', $id);
