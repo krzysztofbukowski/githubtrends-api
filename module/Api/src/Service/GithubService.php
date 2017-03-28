@@ -191,6 +191,7 @@ class GithubService implements GithubServiceInterface, ServiceInterface
 
         if ($cacheAdapter instanceof AbstractAdapter) {
             $result = $cacheAdapter->getItem($keyName);
+
             if ($result == 'not_found') {
                 return false;
             }
@@ -202,11 +203,11 @@ class GithubService implements GithubServiceInterface, ServiceInterface
             $result = $this->_api->checkIfRepoExists($owner, $repository);
 
             if ($cacheAdapter instanceof AbstractAdapter) {
-                $cacheAdapter->setItem($keyName, 'not_found');
+                $cacheAdapter->setItem($keyName, $result === false ? 'not_found' : $result);
             }
         }
 
-        return $result;
+        return (bool)$result;
     }
 
     /**
