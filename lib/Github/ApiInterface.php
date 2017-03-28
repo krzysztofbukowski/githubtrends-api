@@ -52,4 +52,15 @@ interface ApiInterface
      * @return mixed
      */
     public function getPullRequests(string $owner, string $repository, string $is);
+
+    /**
+     * Check if the given repository exists. Return true if yes, false otherwise
+     *
+     * @param string $owner
+     * @param string $repository
+     *
+     *
+     * @return boolean
+     */
+    public function checkIfRepoExists(string $owner, string $repository);
 }

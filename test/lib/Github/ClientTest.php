@@ -2,6 +2,7 @@
 namespace Test\Github;
 
 use Github\Client;
+use Zend\Http\Request;
 use Zend\Http\Response;
 
 /**
@@ -16,7 +17,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     protected $_client;
 
     /**
-     * @var
+     * @var \PHPUnit_Framework_MockObject_MockObject
      */
     protected $_httpClientMock;
 
@@ -29,59 +30,43 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     }
 
 
-    public function testGetWillUseHttpClientToMakeRequest()
+    public function testGetWillUseHttpClientToSendAGetRequest()
     {
         $path = '/some/path';
 
-        $this->_httpClientMock->method('send')
+        $this->_httpClientMock->expects($this->once())
+            ->method('send')
             ->willReturn(new Response());
 
-        $this->_httpClientMock->method('setUri')
+        $this->_httpClientMock->expects($this->once())
+            ->method('setUri')
             ->with(Client::API_HOST . $path);
+
+        $this->_httpClientMock->expects($this->once())
+            ->method('setMethod')
+            ->with(Request::METHOD_GET);
 
         $this->_client->get($path);
     }
 
-    public function testGetWillReturnObjectOnSuccess()
+
+    public function testHeadWillUseHttpClientToSendAHeadRequest()
     {
         $path = '/some/path';
 
-        $response = new Response();
-        $response->setContent(json_encode(new \stdClass()));
+        $this->_httpClientMock->expects($this->once())
+            ->method('send')
+            ->willReturn(new Response());
 
-        $this->_httpClientMock->method('send')
-            ->willReturn($response);
-
-        $this->_httpClientMock->method('setUri')
+        $this->_httpClientMock->expects($this->once())
+            ->method('setUri')
             ->with(Client::API_HOST . $path);
 
-        $result = $this->_client->get($path);
-        $this->assertInstanceOf(\stdClass::class, $result);
-    }
+        $this->_httpClientMock->expects($this->once())
+            ->method('setMethod')
+            ->with(Request::METHOD_HEAD);
 
-    public function testGetWillReturnNullOnFailure()
-    {
-        $path = '/some/path';
-
-        $this->_httpClientMock->method('send')
-            ->willThrowException(new \Exception());
-        $this->_httpClientMock->method('setUri')
-            ->with(Client::API_HOST . $path);
-
-        $result = $this->_client->get($path);
-        $this->assertNull($result);
-    }
-
-    public function testGetWillReturnNullIfResponseStatusCodeIsNot200 () {
-        $response = new Response();
-        $response->setStatusCode(Response::STATUS_CODE_400);
-
-        $path = '/some/path';
-        $this->_httpClientMock->method('send')
-            ->willReturn($response);
-
-        $result = $this->_client->get($path);
-        $this->assertNull($result);
+        $this->_client->head($path);
     }
 
 }

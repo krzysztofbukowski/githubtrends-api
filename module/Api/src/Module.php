@@ -85,9 +85,13 @@ class Module implements ConfigProviderInterface
                     $service = $container->get(StatusService::class);
                     return new Controller\IndexController($service);
                 },
-                Controller\ReposController::class => function ($container) {
+                Controller\RepoController::class => function ($container) {
                     $service = $container->get(GithubService::class);
-                    return new Controller\ReposController($service);
+                    return new Controller\RepoController($service);
+                },
+                Controller\CompareController::class => function ($container) {
+                    $service = $container->get(GithubService::class);
+                    return new Controller\CompareController($service);
                 },
             ],
         ];

@@ -10,13 +10,15 @@ namespace Api\Service;
 use Api\Model\Mapper\RepositoryMapper;
 use Github\Api;
 use Github\ApiInterface;
+use Zend\Cache\Storage\Adapter\AbstractAdapter;
+use Zend\Http\Response;
 
 /**
  * Class GithubService
  *
  * @package Api\Service
  */
-class GithubService implements GithubServiceInterface
+class GithubService implements GithubServiceInterface, ServiceInterface
 {
     /**
      * @var Api
@@ -60,6 +62,22 @@ class GithubService implements GithubServiceInterface
         return $this->_mapper;
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function setCacheAdapter(AbstractAdapter $adapter)
+    {
+        $this->_cacheAdapter = $adapter;
+    }
+
+    /**
+     * @return AbstractAdapter
+     */
+    public function getCacheAdapter()
+    {
+        return $this->_cacheAdapter;
+    }
+
 
     /**
      * {@inheritdoc}
@@ -92,69 +110,113 @@ class GithubService implements GithubServiceInterface
         return $result;
     }
 
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setCacheAdapter(\Zend\Cache\Storage\Adapter\AbstractAdapter $adapter)
-    {
-        $this->_cacheAdapter = $adapter;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getCacheAdapter()
-    {
-        return $this->_cacheAdapter;
-    }
-
     /**
      * @param $repository
      *
      * @return mixed|string
      */
-    protected function getRepoDetails($repository)
+    public function getRepoDetails($repository)
     {
         list($owner, $repository) = explode('/', $repository);
 
         $result = [];
 
-        if (($apiResult = $this->_api->get($owner, $repository)) !== null) {
-            $result['details'] = $apiResult;
+        $result['details'] = $this->getRepo($repository, $owner);
+
+        if ($result['details'] == null) {
+            return null;
         }
 
-        if (($apiResult = $this->_api->latest($owner, $repository)) !== null) {
-            $result['latest_release'] = $apiResult;
+        $result['latest_release'] = $this->getLatestRelease($owner, $repository);
+        $result['pull_requests']['open'] = $this->getOpenPullRequests($owner, $repository);
+        $result['pull_requests']['closed'] = $this->getClosedPullRequests($owner, $repository);
+        $result['pull_requests']['merged'] = $this->getMergedPullRequests($owner, $repository);
+
+        return $result;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getLatestRelease(string $owner, string $repository)
+    {
+        return $this->_api->latest($owner, $repository);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getOpenPullRequests(string $owner, string $repository)
+    {
+        return $this->_api->getPullRequests(
+            $owner,
+            $repository,
+            ApiInterface::PR_IS_OPEN
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getMergedPullRequests(string $owner, string $repository)
+    {
+        return $this->_api->getPullRequests(
+            $owner,
+            $repository,
+            ApiInterface::PR_IS_MERGED
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getClosedPullRequests(string $owner, string $repository)
+    {
+        return $this->_api->getPullRequests(
+            $owner,
+            $repository,
+            ApiInterface::PR_IS_CLOSED
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function checkIfRepoExists(string $repository)
+    {
+        $keyName = "repo_$repository";
+        $result = null;
+
+        $cacheAdapter = $this->getCacheAdapter();
+
+        if ($cacheAdapter instanceof AbstractAdapter) {
+            $result = $cacheAdapter->getItem($keyName);
+            if ($result == 'not_found') {
+                return false;
+            }
         }
 
-        if (($apiResult = $this->_api->getPullRequests(
-                $owner,
-                $repository,
-                ApiInterface::PR_IS_OPEN
-            )) !== null
-        ) {
-            $result['pull_requests']['open'] = $apiResult;
-        }
+        if ($result === null) {
+            list($owner, $repository) = explode('/', $repository);
 
-        if (($apiResult = $this->_api->getPullRequests(
-                $owner,
-                $repository,
-                ApiInterface::PR_IS_CLOSED
-            )) !== null
-        ) {
-            $result['pull_requests']['closed'] = $apiResult;
-        }
+            $result = $this->_api->checkIfRepoExists($owner, $repository);
 
-        if (($apiResult = $this->_api->getPullRequests(
-                $owner,
-                $repository,
-                ApiInterface::PR_IS_MERGED
-            )) !== null
-        ) {
-            $result['pull_requests']['merged'] = $apiResult;
+            if ($cacheAdapter instanceof AbstractAdapter) {
+                $cacheAdapter->setItem($keyName, 'not_found');
+            }
         }
 
         return $result;
+    }
+
+    /**
+     * @param $repository
+     * @param $owner
+     *
+     * @return mixed
+     */
+    public function getRepo($repository, $owner)
+    {
+        return $this->_api->get($owner, $repository);
     }
 }

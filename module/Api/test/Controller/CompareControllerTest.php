@@ -3,13 +3,13 @@
 
 namespace ApiTest\Controller;
 
-use Api\Controller\ReposController;
+use Api\Controller\CompareController;
 use Api\Module;
 use Api\Service\GithubService;
 use Zend\Stdlib\ArrayUtils;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 
-class ReposControllerTest extends AbstractHttpControllerTestCase
+class CompareControllerTest extends AbstractHttpControllerTestCase
 {
     protected $_controller;
     protected $_request;
@@ -36,7 +36,8 @@ class ReposControllerTest extends AbstractHttpControllerTestCase
             GithubService::class
         )->disableOriginalConstructor()->getMock();
 
-        $githubRepositoriesServiceMock->method('compare')
+        $githubRepositoriesServiceMock->expects($this->once())
+            ->method('compare')
             ->willReturn([]);
 
         $serviceManager = $this->getApplicationServiceLocator();
@@ -47,11 +48,11 @@ class ReposControllerTest extends AbstractHttpControllerTestCase
         );
 
 
-        $this->dispatch('/repos/owner/repo1,owner/repo2', 'GET');
+        $this->dispatch('/compare/owner/repo1,owner2/repo2', 'GET');
         $this->assertResponseStatusCode(200);
         $this->assertModuleName(Module::NAME);
-        $this->assertControllerName(ReposController::class); // as specified in router's controller name alias
-        $this->assertControllerClass('reposcontroller');
-        $this->assertMatchedRouteName('repository/stats');
+        $this->assertControllerName(CompareController::class); // as specified in router's controller name alias
+        $this->assertControllerClass('comparecontroller');
+        $this->assertMatchedRouteName('compare');
     }
 }

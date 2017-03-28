@@ -24,7 +24,27 @@ class ApiTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()->getMock();
     }
 
-    public function testGetWillUseGithubClient()
+    public function testGetWillUseGithubClientAndWillReturnObject()
+    {
+        $owner = 'phpunit';
+        $repository = 'test';
+
+        $response = new Response();
+        $response->setStatusCode(Response::STATUS_CODE_200);
+        $response->setContent("{}");
+
+        $this->_clientMock->expects($this->once())
+            ->method('get')
+            ->with("/repos/$owner/$repository")
+            ->willReturn($response);
+
+        $api = new Api($this->_clientMock);
+        $result = $api->get($owner, $repository);
+
+        $this->assertInstanceOf(\stdClass::class, $result);
+    }
+
+    public function testGetWillUseGithubClientAndWillReturnNull()
     {
         $owner = 'phpunit';
         $repository = 'test';
@@ -32,13 +52,35 @@ class ApiTest extends \PHPUnit_Framework_TestCase
         $this->_clientMock->expects($this->once())
             ->method('get')
             ->with("/repos/$owner/$repository")
-            ->willReturn(new Response());
+            ->willReturn(null);
 
         $api = new Api($this->_clientMock);
-        $api->get($owner, $repository);
+        $result = $api->get($owner, $repository);
+
+        $this->assertNull($result);
     }
 
-    public function testLatestWillUseGithubClient()
+    public function testLatestWillUseGithubClientAndWillReturnObject()
+    {
+        $owner = 'phpunit';
+        $repository = 'test';
+
+        $response = new Response();
+        $response->setStatusCode(Response::STATUS_CODE_200);
+        $response->setContent("{}");
+
+        $this->_clientMock->expects($this->once())
+            ->method('get')
+            ->with("/repos/$owner/$repository/releases/latest")
+            ->willReturn($response);
+
+        $api = new Api($this->_clientMock);
+        $result = $api->latest($owner, $repository);
+
+        $this->assertInstanceOf(\stdClass::class, $result);
+    }
+
+    public function testLatestWillUseGithubClientAndWillReturnNullIfResponseIsEmpty()
     {
         $owner = 'phpunit';
         $repository = 'test';
@@ -46,10 +88,12 @@ class ApiTest extends \PHPUnit_Framework_TestCase
         $this->_clientMock->expects($this->once())
             ->method('get')
             ->with("/repos/$owner/$repository/releases/latest")
-            ->willReturn(new Response());
+            ->willReturn(null);
 
         $api = new Api($this->_clientMock);
-        $api->latest($owner, $repository);
+        $result = $api->latest($owner, $repository);
+
+        $this->assertNull($result);
     }
 
     public function testGetPullRequestsWillUseGithubClientAndGetOpenPr()
@@ -95,6 +139,56 @@ class ApiTest extends \PHPUnit_Framework_TestCase
 
         $api = new Api($this->_clientMock);
         $api->getPullRequests($owner, $repository, $is);
+    }
+
+    public function testGetPullRequestsWillUseGithubClientAndReturnNullIfResponseEmpty()
+    {
+        $owner = 'phpunit';
+        $repository = 'test';
+        $is = ApiInterface::PR_IS_MERGED;
+
+        $this->_clientMock->expects($this->once())
+            ->method('get')
+            ->with("/search/issues?q=+type:pr+repo:$owner/$repository+is:$is")
+            ->willReturn(null);
+
+        $api = new Api($this->_clientMock);
+        $result = $api->getPullRequests($owner, $repository, $is);
+
+        $this->assertNull($result);
+    }
+
+    public function testGetPullRequestsWillUseGithubClientAndReturnNullIfResponseNot200()
+    {
+        $owner = 'phpunit';
+        $repository = 'test';
+        $is = ApiInterface::PR_IS_MERGED;
+
+        $response = new Response();
+        $response->setStatusCode(Response::STATUS_CODE_404);
+
+        $this->_clientMock->expects($this->once())
+            ->method('get')
+            ->with("/search/issues?q=+type:pr+repo:$owner/$repository+is:$is")
+            ->willReturn($response);
+
+        $api = new Api($this->_clientMock);
+        $result = $api->getPullRequests($owner, $repository, $is);
+
+        $this->assertNull($result);
+    }
+
+    public function testCheckIfRepoExistsWillUseUseGithubClient()
+    {
+        $owner = 'phpuni';
+        $repository = 'test';
+
+        $this->_clientMock->expects($this->once())
+            ->method('head')
+            ->with("/repos/$owner/$repository");
+
+        $api = new Api($this->_clientMock);
+        $api->checkIfRepoExists($owner, $repository);
     }
 
 }

@@ -116,8 +116,8 @@ class ModuleTest extends PHPUnit_Framework_TestCase
             ->willReturn($serviceMock);
 
         $this->assertInstanceOf(
-            \Api\Controller\ReposController::class,
-            $result['factories'][\Api\Controller\ReposController::class]($this->_serviceManagerMock)
+            \Api\Controller\RepoController::class,
+            $result['factories'][\Api\Controller\RepoController::class]($this->_serviceManagerMock)
         );
     }
 
