@@ -8,6 +8,7 @@ namespace Api\Service;
 
 
 use Zend\Cache\Storage\Adapter\AbstractAdapter;
+use Zend\Log\Logger;
 
 interface ServiceInterface
 {
@@ -27,4 +28,19 @@ interface ServiceInterface
      * @return mixed
      */
     public function setCacheAdapter(AbstractAdapter $cacheAdapter);
+
+    /**
+     * Set the logger instance
+     *
+     * @param Logger $logger
+     * @return mixed
+     */
+    public function setLogger(Logger $logger);
+
+    /**
+     * Get the logger instance
+     *
+     * @return Logger
+     */
+    public function getLogger();
 }

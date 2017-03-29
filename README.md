@@ -67,7 +67,7 @@ To workaround this problem you need to manually run `vagrant rsync-auto`**
 
 You can run unit tests inside the VM by running in the project path
 
-    $ composer test 
+    $ ./vendor/bin/phpunit
 
 #### Code coverage
 
@@ -76,3 +76,9 @@ Code coverage is generated for the unit tests. You can browse the report by acce
 #### Apache logs
 
 Apache logs can be found in the `/var/log/httpd/githubtrends.pl` folder.
+
+#### Application logs
+
+The application provides application level logs available in `/var/log/githubtrends.pl`.
+Logging uses the (zend-log)[https://docs.zendframework.com/zend-log/] component. A logger instance is created
+in `Module.php`. You can use `ServiceManager` to inject it into your service.

@@ -10,6 +10,10 @@ class ModuleTest extends PHPUnit_Framework_TestCase
      * @var \Api\Module
      */
     protected $_module;
+
+    /**
+     * @var PHPUnit_Framework_MockObject_MockObject
+     */
     protected $_serviceManagerMock;
 
     protected function setUp()
@@ -18,7 +22,6 @@ class ModuleTest extends PHPUnit_Framework_TestCase
         $this->_serviceManagerMock = $this->getMockBuilder(
             \Zend\ServiceManager\ServiceManager::class
         )->getMock();
-
     }
 
     public function testGetServiceConfigReturnsArray()
@@ -60,12 +63,19 @@ class ModuleTest extends PHPUnit_Framework_TestCase
         $this->assertInternalType('array', $result);
         $this->assertArrayHasKey('factories', $result);
 
-        $redisAdatperMock = $this->getMockBuilder(\Zend\Cache\Storage\Adapter\Redis::class)
+        $redisAdapterMock = $this->getMockBuilder(\Zend\Cache\Storage\Adapter\Redis::class)
         ->disableOriginalConstructor()->getMock();
 
-        $this->_serviceManagerMock->method('get')
-            ->with(\Zend\Cache\Storage\Adapter\Redis::class)
-            ->willReturn($redisAdatperMock);
+        $loggerMock = $this->getMockBuilder(\Zend\Log\Logger::class)
+            ->getMock();
+
+        $this->_serviceManagerMock->expects($this->exactly(2))
+            ->method('get')
+            ->withConsecutive(
+                ['logger'],
+                [\Zend\Cache\Storage\Adapter\Redis::class]
+            )
+            ->willReturnOnConsecutiveCalls($loggerMock, $redisAdapterMock);
 
         $this->assertInstanceOf(
             \Api\Service\GithubService::class,

@@ -7,6 +7,7 @@ use Api\Controller\RepoController;
 use Api\Module;
 use Api\Service\GithubService;
 use Zend\Http\Response;
+use Zend\Log\Logger;
 use Zend\Stdlib\ArrayUtils;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 
@@ -17,6 +18,11 @@ class RepoControllerTest extends AbstractHttpControllerTestCase
      * @var \PHPUnit_Framework_MockObject_MockObject
      */
     protected $_githubRepositoriesServiceMock;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $_loggerMock;
 
     protected function setUp()
     {
@@ -31,18 +37,18 @@ class RepoControllerTest extends AbstractHttpControllerTestCase
             GithubService::class
         )->disableOriginalConstructor()->getMock();
 
+        $this->_loggerMock = $this->getMockBuilder(Logger::class)
+            ->disableOriginalConstructor()->getMock();
+
         parent::setUp();
     }
 
     public function testGetCanBeAccessed()
     {
-
         $serviceManager = $this->getApplicationServiceLocator();
         $serviceManager->setAllowOverride(true);
-        $serviceManager->setService(
-            GithubService::class,
-            $this->_githubRepositoriesServiceMock
-        );
+        $serviceManager->setService(GithubService::class, $this->_githubRepositoriesServiceMock);
+        $serviceManager->setService('logger', $this->_loggerMock);
 
         $this->_githubRepositoriesServiceMock->expects($this->once())
             ->method('checkIfRepoExists')
@@ -60,10 +66,8 @@ class RepoControllerTest extends AbstractHttpControllerTestCase
     {
         $serviceManager = $this->getApplicationServiceLocator();
         $serviceManager->setAllowOverride(true);
-        $serviceManager->setService(
-            GithubService::class,
-            $this->_githubRepositoriesServiceMock
-        );
+        $serviceManager->setService(GithubService::class, $this->_githubRepositoriesServiceMock);
+        $serviceManager->setService('logger', $this->_loggerMock);
 
         $this->_githubRepositoriesServiceMock->expects($this->once())
             ->method('checkIfRepoExists')

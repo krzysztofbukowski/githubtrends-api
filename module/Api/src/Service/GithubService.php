@@ -12,6 +12,7 @@ use Github\Api;
 use Github\ApiInterface;
 use Zend\Cache\Storage\Adapter\AbstractAdapter;
 use Zend\Http\Response;
+use Zend\Log\Logger;
 
 /**
  * Class GithubService
@@ -35,6 +36,11 @@ class GithubService implements GithubServiceInterface, ServiceInterface
      * @var RepositoryMapper
      */
     protected $_mapper;
+
+    /**
+     * @var Logger
+     */
+    protected $_logger;
 
     /**
      * GithubService constructor.
@@ -89,6 +95,9 @@ class GithubService implements GithubServiceInterface, ServiceInterface
         $cacheAdapter = $this->getCacheAdapter();
 
         if ($cacheAdapter instanceof \Zend\Cache\Storage\Adapter\AbstractAdapter) {
+            if ($this->getLogger() instanceof Logger) {
+                $this->_logger->debug('Load data from cache', [$cacheKey, self::class]);
+            }
             $result = $cacheAdapter->getItem($cacheKey);
             if ($result != null) {
                 return (array)json_decode($result);
@@ -104,6 +113,9 @@ class GithubService implements GithubServiceInterface, ServiceInterface
         ];
 
         if ($cacheAdapter instanceof \Zend\Cache\Storage\Adapter\AbstractAdapter) {
+            if ($this->getLogger() instanceof Logger) {
+                $this->_logger->debug('Save data to cache', [$cacheKey, self::class]);
+            }
             $cacheAdapter->setItem($cacheKey, json_encode($result));
         }
 
@@ -219,5 +231,22 @@ class GithubService implements GithubServiceInterface, ServiceInterface
     public function getRepo($repository, $owner)
     {
         return $this->_api->get($owner, $repository);
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setLogger(Logger $logger)
+    {
+        $this->_logger = $logger;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getLogger()
+    {
+        return $this->_logger;
     }
 }

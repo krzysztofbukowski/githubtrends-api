@@ -38,9 +38,16 @@ end
 end
 
 directory '/var/log/httpd' do
-	owner 'root'
-	group 'root'
+	owner 'apache'
+	group 'apache'
 	mode  '0755'
+end
+
+directory '/var/log/githubtrends.pl' do
+	owner 'apache'
+	group 'apache'
+	mode  '0755'
+	action :create
 end
 
 #create directories for vhosts
