@@ -82,3 +82,75 @@ Apache logs can be found in the `/var/log/httpd/githubtrends.pl` folder.
 The application provides application level logs available in `/var/log/githubtrends.pl`.
 Logging uses the (zend-log)[https://docs.zendframework.com/zend-log/] component. A logger instance is created
 in `Module.php`. You can use `ServiceManager` to inject it into your service.
+
+
+## API
+
+Currently the API provides the following endpoints:
+
+1. `http://api.dev.githubtrends.pl/` - get information about the API
+
+Sample request
+
+    curl -X GET -H "Cache-Control: no-cache" "http://api.dev.githubtrends.pl/"
+
+Response code
+    
+    200 OK 
+
+Sample response
+
+    {
+      "uptime": 92,
+      "version": "1.0.0"
+    }
+    
+2. `http://api.dev.githubtrends.pl/repo/{id}`
+
+    - *id* string Repository name, i.e `angular/angular`
+
+Sample request
+
+    curl -X GET -H "Cache-Control: no-cache" "http://api.dev.githubtrends.pl/repo/angular/angular"
+ 
+Sample response 
+
+Response code
+    
+    200 OK - repository found
+    404 Not found - repository not found
+ 
+3. `http://api.dev.githubtrends.pl/compare/{id}` - get information about two repositories
+
+    - *id* string Comma separated repository names, i.e `angular/angular,facebook/react`
+     
+Sample request
+     
+     curl -X GET -H "Cache-Control: no-cache" "http://api.dev.githubtrends.pl/compare/angular/angular%2Cfacebook/react"
+     
+Sample response
+
+    [
+      {
+        "forks": 5725,
+        "watchers": 22472,
+        "stars": 22472,
+        "full_name": "angular/angular",
+        "latest_release": null,
+        "open_pull_requests": 125,
+        "closed_pull_requests": 5747,
+        "last_merged_pull_request": "2017-03-29T17:27:48Z"
+      },
+      {
+        "forks": 11670,
+        "watchers": 63131,
+        "stars": 63131,
+        "full_name": "facebook/react",
+        "latest_release": "2017-01-06T19:52:54Z",
+        "open_pull_requests": 128,
+        "closed_pull_requests": 4819,
+        "last_merged_pull_request": "2017-03-29T12:55:04Z"
+      }
+    ]
+    
+If details for a repository are not found `null` will be returned
