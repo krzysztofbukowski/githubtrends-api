@@ -73,9 +73,11 @@ You can run unit tests inside the VM by running in the project path
 
 Code coverage is generated for the unit tests. You can browse the report by accessing `http://api.dev.githubtrends.pl/tests`
 
+## Logs
+
 #### Apache logs
 
-Apache logs can be found in the `/var/log/httpd/githubtrends.pl` folder.
+The application is run by the apache webserve. Apache logs can be found in the `/var/log/httpd/githubtrends.pl` folder.
 
 #### Application logs
 
