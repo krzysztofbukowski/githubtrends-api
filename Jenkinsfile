@@ -1,5 +1,11 @@
 pipeline {
-  agent any
+  agent {
+    docker {
+      image 'composer:latest'
+      args '-v $(pwd):/var/app composer install'
+    }
+    
+  }
   stages {
     stage('Test') {
       steps {
